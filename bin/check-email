@@ -1,0 +1,33 @@
+#!/usr/bin/env python3
+from validate_email import ValidateEmail
+import argparse
+import sys
+
+
+def main(args): 
+     if args.debug: 
+         import logging
+         logging.basicConfig() 
+     v = ValidateEmail()
+     result = v.validate_email(args.rcpt,check_mx=args.mx,verify=args.validate,debug=args.debug,smtp_timeout=args.timeout) 
+     if result: 
+         print("%s is valid!" % args.rcpt) 
+         return True
+     elif result is None: 
+         print("I'm not sure.") 
+         return False
+     else: 
+         print("%s is invalid!" % args.rcpt) 
+         return False
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description='email checker')
+    parser.add_argument('rcpt',help='SMTP rcpt to:' )
+    parser.add_argument('--mx', action='store_true', default=False,help='MX check' )
+    parser.add_argument('--validate', action='store_true', default=False,help='Validate check')
+    parser.add_argument('--smtp_timeout',dest='timeout',type=int, default=10,help='SMTP timeout' )
+    parser.add_argument('--debug', action='store_true', default=False,help='DEBUG output' )
+    args = parser.parse_args()
+    if main(args):
+        sys.exit(0)
+    else:
+        sys.exit(199)
