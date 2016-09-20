@@ -132,6 +132,7 @@ def validate_email(email, check_mx=False, verify=False, debug=False, smtp_timeou
                                 'have installed pyDNS python package')
             hostname = email[email.find('@') + 1:]
             mx_hosts = get_mx_ip(hostname)
+            smtp_status = 0
             if mx_hosts is None:
                 return False
             for mx in mx_hosts:
@@ -148,6 +149,7 @@ def validate_email(email, check_mx=False, verify=False, debug=False, smtp_timeou
                             pass
                         return True
                     status, _ = smtp.helo()
+                    smtp_status = status
                     if status != 250:
                         smtp.quit()
                         if debug:
@@ -161,12 +163,15 @@ def validate_email(email, check_mx=False, verify=False, debug=False, smtp_timeou
                     if debug:
                         logger.debug(u'%s answer: %s - %s', mx[1], status, _)
                     smtp.quit()
+                    smtp_status = status
                 except smtplib.SMTPServerDisconnected:  # Server not permits verify user
                     if debug:
                         logger.debug(u'%s disconected.', mx[1])
                 except smtplib.SMTPConnectError:
                     if debug:
                         logger.debug(u'Unable to connect to %s.', mx[1])
+            if smtp_status>500:
+                return False
             return None
     except AssertionError:
         return False
