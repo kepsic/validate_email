@@ -52,9 +52,9 @@ Verify email exists with command line tool
 
 Check if the host has SMTP Server and the email really exists::
 
-    check-email example@example.com --verify   
+    check-email example@example.com --validate
     check-email example@example.com --mx
-    check-email example@example.com --verify --mx --debug
+    check-email example@example.com --validate --mx --debug
 
 
 TODOs and BUGS
